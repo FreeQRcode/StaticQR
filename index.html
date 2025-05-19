@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Free QR Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    #qr-output {
+      margin-top: 30px;
+      word-break: break-word;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #qr-link {
+      font-size: 14px;
+      margin-top: 10px;
+      word-wrap: break-word;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    img {
+      margin-top: 20px;
+      max-width: 200px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Free QR Code Generator</h1>
+  <p>Enter any URL or text below to generate a QR code:</p>
+
+  <input type="text" id="qr-input" placeholder="https://example.com" />
+  <button onclick="generateQR()">Generate QR Code</button>
+
+  <div id="qr-output" style="display:none;">
+    <h3>Your QR Code:</h3>
+    <img id="qr-image" src="" alt="QR Code" />
+    <p id="qr-link"></p>
+  </div>
+
+  <script>
+    function generateQR() {
+      const input = document.getElementById('qr-input').value.trim();
+      const output = document.getElementById('qr-output');
+      const qrImage = document.getElementById('qr-image');
+      const qrLink = document.getElementById('qr-link');
+
+      if (input === '') {
+        alert('Please enter a valid URL or text.');
+        output.style.display = 'none';
+        return;
+      }
+
+      // Encode input for URL
+      const encodedData = encodeURIComponent(input);
+
+      // Use goqr.me API instead of deprecated Google Charts
+      const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedData}`;
+
+      qrImage.src = qrURL;
+      qrImage.alt = `QR code for ${input}`;
+      qrLink.textContent = input;
+
+      output.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
