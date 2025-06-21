@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> <meta name="google-site-verification" content="dNeMvYUuHi5L-iNx4sb7KaE2_zehkc4zv_M10eKYRnE" />
+<head>
+  <meta name="google-site-verification" content="dNeMvYUuHi5L-iNx4sb7KaE2_zehkc4zv_M10eKYRnE" />
+  <meta charset="UTF-8" />
   <title>Free QR Code Generator with Lifetime Validity | Instant & No Expiry</title>
   <meta name="description" content="Generate free QR codes with lifetime validity instantly! No expiration, unlimited scans, and easy customization. Perfect for business, events, or personal use." />
-  <meta charset="UTF-8" />
-  <title>Free QR Code Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 50px;
     }
-    input[type="text"] {
+    input[type="text"], select {
       width: 300px;
       padding: 10px;
       font-size: 16px;
+      margin-bottom: 10px;
     }
     button {
       padding: 10px 20px;
       font-size: 16px;
-      margin-left: 10px;
+      margin: 10px 5px;
       cursor: pointer;
     }
     #qr-output {
@@ -33,8 +34,6 @@
       font-size: 14px;
       margin-top: 10px;
       word-wrap: break-word;
-      word-break: break-word;
-      overflow-wrap: break-word;
     }
     img {
       margin-top: 20px;
@@ -48,7 +47,14 @@
   <p>Enter any URL or text below to generate a QR code:</p>
 
   <input type="text" id="qr-input" placeholder="https://example.com" />
+  <br />
+  <select id="qr-format">
+    <option value="png">PNG</option>
+    <option value="svg">SVG</option>
+  </select>
+  <br />
   <button onclick="generateQR()">Generate QR Code</button>
+  <button onclick="downloadQR()">Download QR</button>
 
   <div id="qr-output" style="display:none;">
     <h3>Your QR Code:</h3>
@@ -57,11 +63,15 @@
   </div>
 
   <script>
+    let currentQRUrl = '';
+    let currentFormat = 'png';
+
     function generateQR() {
       const input = document.getElementById('qr-input').value.trim();
       const output = document.getElementById('qr-output');
       const qrImage = document.getElementById('qr-image');
       const qrLink = document.getElementById('qr-link');
+      const format = document.getElementById('qr-format').value;
 
       if (input === '') {
         alert('Please enter a valid URL or text.');
@@ -69,22 +79,41 @@
         return;
       }
 
-      // Encode input for URL
       const encodedData = encodeURIComponent(input);
-
-      // Use goqr.me API instead of deprecated Google Charts
-      const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedData}`;
+      const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedData}&format=${format}`;
 
       qrImage.src = qrURL;
       qrImage.alt = `QR code for ${input}`;
       qrLink.textContent = input;
-
       output.style.display = 'block';
+
+      currentQRUrl = qrURL;
+      currentFormat = format;
+    }
+
+    function downloadQR() {
+      if (!currentQRUrl) {
+        alert("Please generate a QR code first.");
+        return;
+      }
+
+      fetch(currentQRUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `qr-code.${currentFormat}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+          console.error("Download failed:", error);
+          alert("Failed to download QR code. Please try again.");
+        });
     }
   </script>
 </body>
 </html>
-
-<section>
-    <h1>Generate Free QR Codes with Lifetime Validity</h1>
-    <p>Looking for a <strong>free QR code generator</strong> that offers <em>lifetime validity</em>? You’re in the right place! Our easy-to-use tool lets you create custom QR codes instantly without worrying about expiry or scan limits.</p>
